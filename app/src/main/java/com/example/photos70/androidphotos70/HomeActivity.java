@@ -3,6 +3,7 @@ package com.example.photos70.androidphotos70;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -86,6 +87,7 @@ public class HomeActivity extends Activity {
                     noAlbumSelectedDialog();
                     break;
                 }
+                openAlbum();
                 break;
         }
         // Not sure if this is needed
@@ -240,6 +242,14 @@ public class HomeActivity extends Activity {
 
         selectedAlbum.setName(newName);
         albumArrayAdapter.notifyDataSetChanged();
+    }
+
+    private void openAlbum() {
+        Intent openIntent = new Intent(getApplicationContext(), AlbumActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("album", selectedAlbum);
+        openIntent.putExtras(bundle);
+        startActivity(openIntent);
     }
 
     private void resetSelection() {
