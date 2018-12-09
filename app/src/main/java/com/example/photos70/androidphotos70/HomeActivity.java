@@ -10,9 +10,12 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.photos70.model.Album;
 
@@ -24,15 +27,15 @@ public class HomeActivity extends Activity {
     // array adapter here
     private ArrayAdapter<Album> albumArrayAdapter;
 
+    private Album selectedAlbum;
     private int selectedIndex;
-    private int selectedColor = Color.parseColor("#1b1b1b");
 
     private ListView albumsListView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        selectedAlbum = null;
         Resources res = getResources();
         albumList.add(new Album("a"));
         // array adapter here
@@ -40,7 +43,7 @@ public class HomeActivity extends Activity {
         albumsListView = (ListView) findViewById(R.id.albumsListView);
         // array adapter here
         albumsListView.setAdapter(albumArrayAdapter);
-      //  albumsListView.setAdapter(new ArrayAdapter<Album>());
+        albumsListView.setOnItemClickListener( (p,v,pos,id) -> selectAlbum(pos) );
     }
 
     @Override
@@ -56,8 +59,10 @@ public class HomeActivity extends Activity {
             case R.id.addItem:
                 createAlbumDialog();
                 break;
-            case  R.id.deleteItem:
-
+            case R.id.deleteItem:
+                //what if nothing is selected?
+                // need to account for that
+                deleteAlbumDialog();
                 break;
             case R.id.renameItem:
 
@@ -75,7 +80,7 @@ public class HomeActivity extends Activity {
 
     private void createAlbumDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("New Album");
+        builder.setTitle("Enter album name");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
@@ -114,6 +119,49 @@ public class HomeActivity extends Activity {
         albumList.add(newAlbum);
         // array adapter here
         albumArrayAdapter.notifyDataSetChanged();
+    }
+
+    private void selectAlbum(int pos) {
+        selectedAlbum = albumList.get(pos);
+    }
+
+    private void deleteAlbumDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                try {
+                    deleteAlbum();
+                } catch (Exception e) {
+                    dialog.cancel();
+                    // show toast saying album already exists
+                }
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void deleteAlbum() {
+
+        albumList.remove(selectedAlbum);
+        albumArrayAdapter.notifyDataSetChanged();
+        resetSelection();
+    }
+
+    private void resetSelection() {
+        selectedAlbum = null;
+        albumsListView.setAdapter(albumArrayAdapter); // this somehow clears the selection highlight
     }
 
 }
