@@ -60,18 +60,26 @@ public class HomeActivity extends Activity {
                 createAlbumDialog();
                 break;
             case R.id.deleteItem:
-                //what if nothing is selected?
-                // need to account for that
+                if(selectedAlbum == null) {
+                    noAlbumSelectedDialog();
+                    break;
+                }
                 deleteAlbumDialog();
                 break;
             case R.id.renameItem:
-
+                if(selectedAlbum == null) {
+                    noAlbumSelectedDialog();
+                    break;
+                }
+                renameAlbumDialog();
                 break;
             case R.id.searchItem:
-
                 break;
             case R.id.openItem:
-
+                if(selectedAlbum == null) {
+                    noAlbumSelectedDialog();
+                    break;
+                }
                 break;
         }
 
@@ -93,7 +101,7 @@ public class HomeActivity extends Activity {
                     createAlbum(albumName);
                 } catch (Exception e) {
                     dialog.cancel();
-                    // show toast saying album already exists
+                    Toast.makeText(getBaseContext(), "This album already exists.", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -159,9 +167,63 @@ public class HomeActivity extends Activity {
         resetSelection();
     }
 
+    private void renameAlbumDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter new album name");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String albumName = input.getText().toString();
+                //TODO make sure user cannot input blank name here and in createAlbumDialog
+                try {
+                    renameAlbum(albumName);
+                } catch (Exception e) {
+                    dialog.cancel();
+                    Toast.makeText(getBaseContext(), "This album name already exists.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void renameAlbum(String newName) throws Exception{
+        for(Album a: albumList) {
+            if(a.getName().equals(newName)) {
+                throw new Exception();
+            }
+        }
+
+        selectedAlbum.setName(newName);
+        albumArrayAdapter.notifyDataSetChanged();
+    }
+
     private void resetSelection() {
         selectedAlbum = null;
         albumsListView.setAdapter(albumArrayAdapter); // this somehow clears the selection highlight
     }
 
+    private void noAlbumSelectedDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("No album selected");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.show();
+    }
 }
