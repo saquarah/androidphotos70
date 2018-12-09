@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Menu;
@@ -15,13 +16,18 @@ import android.widget.ListView;
 
 import com.example.photos70.model.Album;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 
 public class HomeActivity extends Activity {
-    ArrayList<Album> albumList = new ArrayList<Album>();
-    ArrayAdapter<Album> albumArrayAdapter;
+    private ArrayList<Album> albumList = new ArrayList<Album>();
+    // array adapter here
+    private ArrayAdapter<Album> albumArrayAdapter;
 
-    ListView albumsListView;
+    private int selectedIndex;
+    private int selectedColor = Color.parseColor("#1b1b1b");
+
+    private ListView albumsListView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,8 +35,10 @@ public class HomeActivity extends Activity {
 
         Resources res = getResources();
         albumList.add(new Album("a"));
+        // array adapter here
         albumArrayAdapter = new ArrayAdapter<Album>(this, R.layout.albums_listview_detail, albumList);
         albumsListView = (ListView) findViewById(R.id.albumsListView);
+        // array adapter here
         albumsListView.setAdapter(albumArrayAdapter);
       //  albumsListView.setAdapter(new ArrayAdapter<Album>());
     }
@@ -76,7 +84,12 @@ public class HomeActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String albumName = input.getText().toString();
-                createAlbum(albumName);
+                try {
+                    createAlbum(albumName);
+                } catch (Exception e) {
+                    dialog.cancel();
+                    // show toast saying album already exists
+                }
             }
         });
 
@@ -90,8 +103,17 @@ public class HomeActivity extends Activity {
         builder.show();
     }
 
-    private void createAlbum(String albumName) {
+    private void createAlbum(String albumName) throws Exception {
+        for(Album a: albumList) {
+            if(a.getName().equals(albumName)) {
+                throw new Exception();
+            }
+        }
 
+        Album newAlbum = new Album(albumName);
+        albumList.add(newAlbum);
+        // array adapter here
+        albumArrayAdapter.notifyDataSetChanged();
     }
 
 }
