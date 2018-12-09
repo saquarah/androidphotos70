@@ -6,8 +6,10 @@ import android.widget.Toast;
 
 import com.example.photos70.model.Album;
 
-public class AlbumActivity extends Activity {
+import java.util.ArrayList;
 
+public class AlbumActivity extends Activity {
+    private ArrayList<Album> albumList;
     private Album thisAlbum;
 
     @Override
@@ -17,5 +19,7 @@ public class AlbumActivity extends Activity {
 
         Bundle bundle = getIntent().getExtras();
         thisAlbum = (Album) bundle.getSerializable("album");
+        albumList = (ArrayList<Album>) bundle.getSerializable("album_list");
+        
     }
 }

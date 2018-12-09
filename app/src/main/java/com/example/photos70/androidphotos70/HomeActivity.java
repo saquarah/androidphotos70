@@ -248,6 +248,7 @@ public class HomeActivity extends Activity {
         Intent openIntent = new Intent(getApplicationContext(), AlbumActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("album", selectedAlbum);
+        bundle.putSerializable("album_list", albumList);
         openIntent.putExtras(bundle);
         startActivity(openIntent);
     }
