@@ -96,7 +96,11 @@ public class HomeActivity extends Activity {
         builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String albumName = input.getText().toString();
+                String albumName = input.getText().toString().trim();
+                if(albumName.equals("")) {
+                    Toast.makeText(getBaseContext(), "No name entered", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 try {
                     createAlbum(albumName);
                 } catch (Exception e) {
@@ -177,8 +181,12 @@ public class HomeActivity extends Activity {
         builder.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String albumName = input.getText().toString();
-                //TODO make sure user cannot input blank name here and in createAlbumDialog
+                String albumName = input.getText().toString().trim();
+                if(albumName.equals("")) {
+                    Toast.makeText(getBaseContext(), "No name entered", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 try {
                     renameAlbum(albumName);
                 } catch (Exception e) {
