@@ -3,19 +3,36 @@ package com.example.photos70.androidphotos70;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
+
+import com.example.photos70.model.Album;
+
+import java.util.ArrayList;
 
 public class HomeActivity extends Activity {
+    ArrayList<Album> albumList = new ArrayList<Album>();
+    ArrayAdapter<Album> albumArrayAdapter;
 
+    ListView albumsListView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        Resources res = getResources();
+        albumList.add(new Album("a"));
+        albumArrayAdapter = new ArrayAdapter<Album>(this, R.layout.albums_listview_detail, albumList);
+        albumsListView = (ListView) findViewById(R.id.albumsListView);
+        albumsListView.setAdapter(albumArrayAdapter);
+      //  albumsListView.setAdapter(new ArrayAdapter<Album>());
     }
 
     @Override

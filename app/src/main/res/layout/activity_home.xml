@@ -7,6 +7,7 @@
     tools:context=".HomeActivity">
 
     <ListView
+        android:id="@+id/albumsListView"
         android:layout_width="match_parent"
-        android:layout_height="514dp" />
+        android:layout_height="0dp" />
 </android.support.constraint.ConstraintLayout>
