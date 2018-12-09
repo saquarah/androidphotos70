@@ -81,6 +81,11 @@ public class HomeActivity extends Activity {
                 renameAlbumDialog();
                 break;
             case R.id.searchItem: // User pressed search
+                if(albumList.isEmpty()) {
+                    Toast.makeText(getBaseContext(), "You have no albums", Toast.LENGTH_LONG).show();
+                    break;
+                }
+                searchAlbums();
                 break;
             case R.id.openItem: // User pressed open
                 if(selectedAlbum == null) {
@@ -251,6 +256,14 @@ public class HomeActivity extends Activity {
         bundle.putSerializable("album_list", albumList);
         openIntent.putExtras(bundle);
         startActivity(openIntent);
+    }
+
+    private void searchAlbums() {
+        Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("album_list", albumList);
+        searchIntent.putExtras(bundle);
+        startActivity(searchIntent);
     }
 
     private void resetSelection() {

@@ -20,6 +20,6 @@ public class AlbumActivity extends Activity {
         Bundle bundle = getIntent().getExtras();
         thisAlbum = (Album) bundle.getSerializable("album");
         albumList = (ArrayList<Album>) bundle.getSerializable("album_list");
-        
+
     }
 }
