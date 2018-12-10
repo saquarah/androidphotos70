@@ -17,7 +17,6 @@ public class PhotoAdapter extends BaseAdapter {
     private Context context;
     public ArrayList<Photo> photos;
 
-
     public PhotoAdapter(Context context, ArrayList<Photo> photos) {
         this.context = context;
         this.photos = photos;
@@ -44,6 +43,7 @@ public class PhotoAdapter extends BaseAdapter {
         Photo photo = photos.get(position);
         Bitmap bitmap = photo.getImage();
         imageView.setImageBitmap(bitmap);
+        imageView.setPadding(5,5,5,5);
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         imageView.setLayoutParams(new GridView.LayoutParams(240, 240));
         return imageView;

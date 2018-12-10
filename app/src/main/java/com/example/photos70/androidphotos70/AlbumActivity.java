@@ -10,7 +10,9 @@ import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -29,7 +31,7 @@ public class AlbumActivity extends Activity {
     private ArrayList<Photo> photoList = new ArrayList<Photo>();
     private ArrayList<Album> albumList;
     private Album thisAlbum;
-    private int selectedIndx;
+    private Photo selectedPhoto;
     private ArrayList<ImageView> imageViewArrayList;
     private PhotoAdapter photoAdapter;
 
@@ -37,12 +39,12 @@ public class AlbumActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
-
+        selectedPhoto = null;
         Bundle bundle = getIntent().getExtras();
         thisAlbum = (Album) bundle.getSerializable("album");
         albumList = (ArrayList<Album>) bundle.getSerializable("album_list");
 
-        selectedIndx = -1;
+
         photoAdapter = new PhotoAdapter(this, photoList);
         loadPhotosList();
 
@@ -50,7 +52,12 @@ public class AlbumActivity extends Activity {
         GridView gridView = findViewById(R.id.gridView);
         gridView.setAdapter(photoAdapter);
 
-
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedPhoto = photoAdapter.photos.get(position);
+            }
+        });
 
     }
 
@@ -70,8 +77,10 @@ public class AlbumActivity extends Activity {
                 askForPhoto();
                 break;
             case R.id.deletePhoto:
+                //TODO implement deletePhoto
                 break;
             case R.id.displayItem:
+                //TODO transfer to display screen
                 break;
         }
         // Not sure if this is needed
