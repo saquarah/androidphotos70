@@ -153,6 +153,7 @@ public class AlbumActivity extends Activity {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             photoAdapter.photos.remove(selectedPhoto);
                             photoAdapter.notifyDataSetChanged();
+                            selectedPhoto = null;
                             Toast.makeText(AlbumActivity.this, "Photo Deleted", Toast.LENGTH_SHORT).show();
                         }
                     })
