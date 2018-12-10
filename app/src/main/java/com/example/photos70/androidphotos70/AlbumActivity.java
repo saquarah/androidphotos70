@@ -15,6 +15,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.photos70.adapters.PhotoAdapter;
 import com.example.photos70.model.Album;
 import com.example.photos70.model.Photo;
 
@@ -30,19 +31,26 @@ public class AlbumActivity extends Activity {
     private Album thisAlbum;
     private int selectedIndx;
     private ArrayList<ImageView> imageViewArrayList;
+    private PhotoAdapter photoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
-        selectedIndx = -1;
-        loadPhotosList();
-        GridView gridView = findViewById(R.id.gridView);
-
 
         Bundle bundle = getIntent().getExtras();
         thisAlbum = (Album) bundle.getSerializable("album");
         albumList = (ArrayList<Album>) bundle.getSerializable("album_list");
+
+        selectedIndx = -1;
+        photoAdapter = new PhotoAdapter(this, photoList);
+        loadPhotosList();
+
+
+        GridView gridView = findViewById(R.id.gridView);
+        gridView.setAdapter(photoAdapter);
+
+
 
     }
 
@@ -100,7 +108,9 @@ public class AlbumActivity extends Activity {
 
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     Photo photo = new Photo(bitmap);
-                    photoList.add(photo);
+                 //   photoList.add(photo);
+                    photoAdapter.photos.add(photo);
+                    photoAdapter.notifyDataSetChanged();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Unable to open image", Toast.LENGTH_LONG).show();
@@ -114,7 +124,12 @@ public class AlbumActivity extends Activity {
 
     private void displayPhoto() {}
 
-    private void loadPhotosList() {}
+    private void loadPhotosList() {
+        for(Photo p: thisAlbum.getPhotos()) {
+            photoList.add(p);
+            photoAdapter.photos.add(p);
+        }
+    }
 
 
 
