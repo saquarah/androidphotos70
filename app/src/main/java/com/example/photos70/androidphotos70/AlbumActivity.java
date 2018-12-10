@@ -1,6 +1,8 @@
 package com.example.photos70.androidphotos70;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -56,6 +58,7 @@ public class AlbumActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedPhoto = photoAdapter.photos.get(position);
+
             }
         });
 
@@ -78,6 +81,12 @@ public class AlbumActivity extends Activity {
                 break;
             case R.id.deletePhoto:
                 //TODO implement deletePhoto
+               // System.out.println("delete press");
+                //System.out.println(photoList.size());
+                deletePhotoDialog();
+                //System.out.println(photoLi);
+                //System.out.println(thisAlbum.getPhotos().toString());
+
                 break;
             case R.id.displayItem:
                 //TODO transfer to display screen
@@ -129,7 +138,29 @@ public class AlbumActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void deletePhotoDialog() {}
+    private void deletePhotoDialog() {
+
+        if(selectedPhoto == null){
+            Toast.makeText(AlbumActivity.this, "No Photo Selected", Toast.LENGTH_SHORT).show();
+        }else {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Photo")
+                    .setMessage("Do you really want to delete?")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            photoAdapter.photos.remove(selectedPhoto);
+                            photoAdapter.notifyDataSetChanged();
+                            Toast.makeText(AlbumActivity.this, "Photo Deleted", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null).show();
+        }
+
+
+    }
 
     private void displayPhoto() {}
 
