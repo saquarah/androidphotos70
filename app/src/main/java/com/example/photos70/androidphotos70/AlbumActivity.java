@@ -2,6 +2,9 @@ package com.example.photos70.androidphotos70;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Adapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -22,7 +25,7 @@ public class AlbumActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
 
-        GridView gridView = findViewById(R.id.gridview);
+        GridView gridView = findViewById(R.id.gridView);
 
 
         Bundle bundle = getIntent().getExtras();
@@ -30,4 +33,36 @@ public class AlbumActivity extends Activity {
         albumList = (ArrayList<Album>) bundle.getSerializable("album_list");
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // I honestly have no idea what this means, I just found this online.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.album_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.addPhoto:
+
+                break;
+            case R.id.deletePhoto:
+                break;
+            case R.id.displayItem:
+                break;
+        }
+        // Not sure if this is needed
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void askForPhoto() {
+
+    }
+
+    private void deletePhotoDialog() {}
+
+    private void displayPhoto() {}
 }
