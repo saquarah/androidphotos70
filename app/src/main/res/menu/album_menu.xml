@@ -15,4 +15,9 @@
         android:icon="@drawable/ic_image_black_24dp"
         android:title="Display Photo"
         android:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/moveItem"
+        android:title="Move to another album"
+        android:showAsAction="ifRoom"
+        />
 </menu>

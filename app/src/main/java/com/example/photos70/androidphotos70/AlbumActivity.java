@@ -80,16 +80,26 @@ public class AlbumActivity extends Activity {
                 askForPhoto();
                 break;
             case R.id.deletePhoto:
-                //TODO implement deletePhoto
                // System.out.println("delete press");
                 //System.out.println(photoList.size());
+                if(selectedPhoto == null) {
+                    noPhotoSelectedDialog();
+                    break;
+                }
                 deletePhotoDialog();
                 //System.out.println(photoLi);
                 //System.out.println(thisAlbum.getPhotos().toString());
 
                 break;
             case R.id.displayItem:
+                if(selectedPhoto == null) {
+                    noPhotoSelectedDialog();
+                    break;
+                }
+                displayPhoto();
                 //TODO transfer to display screen
+                break;
+            case R.id.moveItem:
                 break;
         }
         // Not sure if this is needed
@@ -163,7 +173,14 @@ public class AlbumActivity extends Activity {
 
     }
 
-    private void displayPhoto() {}
+    private void displayPhoto() {
+        Intent displayIntent = new Intent(getApplicationContext(), DisplayActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("selected_photo", selectedPhoto);
+        bundle.putSerializable("photos_list", photoAdapter.photos);
+        displayIntent.putExtras(bundle);
+        startActivity(displayIntent);
+    }
 
     private void loadPhotosList() {
         for(Photo p: thisAlbum.getPhotos()) {
@@ -172,6 +189,18 @@ public class AlbumActivity extends Activity {
         }
     }
 
+    private void noPhotoSelectedDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("No photo selected");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.show();
+    }
 
 
 }
