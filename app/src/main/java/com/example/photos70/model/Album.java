@@ -1,5 +1,6 @@
 package com.example.photos70.model;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,6 +69,8 @@ public class Album implements Serializable{
         photos.remove(photo);
 
     }
+
+    
     /**
      *
      * @return the list of photos that the album contains

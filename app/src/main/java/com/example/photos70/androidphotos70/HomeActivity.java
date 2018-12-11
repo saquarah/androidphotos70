@@ -19,13 +19,23 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.photos70.model.Album;
+import com.example.photos70.model.Photo;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomeActivity extends Activity {
 
     private ArrayList<Album> albumList = new ArrayList<Album>();
+    private ArrayList<Photo> photoList = new ArrayList<>();
     private ArrayAdapter<Album> albumArrayAdapter;
 
     private Album selectedAlbum;
@@ -36,14 +46,40 @@ public class HomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        System.out.println("HomeActivity.java");
+        //added to de-Serialize Album
+
+            File f = new File(getFilesDir(), "save_object.bin");
+            if (f.exists()) {
+                System.out.println("it is there");
+                loadSerializedObject();
+            }
+
+
 
         selectedAlbum = null; // no selection upon entering activity
-        albumList.add(new Album("test")); //TODO TEST ALBUM: DELETE ME LATER
+        if(!albuminlist("test")) {
+            albumList.add(new Album("test")); //TODO TEST ALBUM: DELETE ME LATER
+        }
+        albumArrayAdapter = new ArrayAdapter<Album>(this, R.layout.albums_listview_detail, albumList);
+        albumsListView = (ListView) findViewById(R.id.albumsListView);
+        albumsListView.setAdapter(albumArrayAdapter);
+        albumsListView.setOnItemClickListener( (p,v,pos,id) -> selectAlbum(pos) );
+
+    }
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+        System.out.println("restart");
+        System.out.println(albumList.toString());
+        loadSerializedObject();
+        System.out.println(albumList.toString());
         albumArrayAdapter = new ArrayAdapter<Album>(this, R.layout.albums_listview_detail, albumList);
         albumsListView = (ListView) findViewById(R.id.albumsListView);
         albumsListView.setAdapter(albumArrayAdapter);
         albumsListView.setOnItemClickListener( (p,v,pos,id) -> selectAlbum(pos) );
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -156,6 +192,61 @@ public class HomeActivity extends Activity {
         albumList.add(newAlbum);
         // array adapter here
         albumArrayAdapter.notifyDataSetChanged();
+
+        //Serialize Album
+        saveAlbumObject();
+    }
+    //added to Serialize the ablum
+    public void saveAlbumObject(){
+       try {
+            File outputFile = new File(getFilesDir(),"save_object.bin");
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(outputFile));
+            oos.writeObject(new ArrayList<Album>(albumList));
+            oos.flush();
+            oos.close();
+            System.out.println("saved album, album page, HomeActivity.java");
+        }catch (java.io.IOException e){
+            System.out.println("saved album error");
+            System.out.println(e.fillInStackTrace().toString());
+
+        }
+
+
+    }
+    //added to de-Serialize the ablum
+    public Object loadSerializedObject(){
+        try{
+            File inputFile = new File(getFilesDir(),"save_object.bin");
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(inputFile));
+            albumList = (ArrayList)ois.readObject();
+           // System.out.println(alist.size());
+            //albumList.addAll(alist);
+            ois.close();
+
+
+
+        }catch(java.io.IOException e){
+            //System.out.println("first error");
+            //e.printStackTrace();
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("second error");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //added to check if album name is in albumList - not sure if we need this. is there a default album need in photo?
+    public boolean albuminlist(String album_name){
+        boolean found=false;
+        //System.out.println("isUser called"+userList.size());
+        for (int i=0;i<albumList.size();i++) {
+            //System.out.println(userList.get(i).toString());
+            if(albumList.get(i).getName().equals(album_name)) {
+                found = true;
+            }
+        }
+        return found;
     }
 
     private void selectAlbum(int pos) {
@@ -175,6 +266,7 @@ public class HomeActivity extends Activity {
 
                 try {
                     deleteAlbum();
+
                 } catch (Exception e) {
                     dialog.cancel();
                     // show toast saying album already exists
@@ -197,8 +289,10 @@ public class HomeActivity extends Activity {
      * resets the selection highlighter.
      */
     private void deleteAlbum() {
-
+        //System.out.println(selectedAlbum.toString());
         albumList.remove(selectedAlbum);
+        //added to Serialize the ablum
+        saveAlbumObject();
         albumArrayAdapter.notifyDataSetChanged();
         resetSelection();
     }
@@ -247,6 +341,8 @@ public class HomeActivity extends Activity {
 
         selectedAlbum.setName(newName);
         albumArrayAdapter.notifyDataSetChanged();
+        //added to Serialize the ablum
+        saveAlbumObject();
     }
 
     private void openAlbum() {
