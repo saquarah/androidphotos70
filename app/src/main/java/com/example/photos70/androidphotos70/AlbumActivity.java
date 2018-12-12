@@ -52,6 +52,7 @@ public class AlbumActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
         selectedPhoto = null;
+
         Bundle bundle = getIntent().getExtras();
         thisAlbum = (Album) bundle.getSerializable("album");
         albumList = (ArrayList<Album>) bundle.getSerializable("album_list");
@@ -73,6 +74,7 @@ public class AlbumActivity extends Activity {
 
         GridView gridView = findViewById(R.id.gridView);
         gridView.setAdapter(photoAdapter);
+
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -97,7 +99,7 @@ public class AlbumActivity extends Activity {
     //added to de-Serialize the ablum
     public Object loadSerializedObject(){
         try{
-            System.out.println(getFilesDir().toString());
+            //System.out.println(getFilesDir().toString());
             File inputFile = new File(getFilesDir(),"save_object.bin");
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(inputFile));
             albumList = (ArrayList)ois.readObject();
@@ -145,6 +147,7 @@ public class AlbumActivity extends Activity {
                 break;
             case R.id.displayItem:
                 //TODO transfer to display screen
+                openAlbum();
                 break;
         }
         // Not sure if this is needed
@@ -225,8 +228,10 @@ public class AlbumActivity extends Activity {
                     System.out.println("imageuri "+imageUri.getPath().toString());
                     //System.out.println("imageuri "+file.getAbsolutePath());
                     Photo photo = new Photo(bitmap,f);
+
                     //photoList.add(photo);
                     thisAlbum.addToAlbum(photo);
+
                     albumList.get(albuminlist(thisAlbum.getName().toString())).addToAlbum(photo);
                     System.out.println("this album "+thisAlbum.toString());
                     System.out.println("albumlist arraylist "+ albumList.toString());
@@ -274,10 +279,26 @@ public class AlbumActivity extends Activity {
                             System.out.println("photoadpater selected photo delete: "+photoAdapter.getItem(0));
                             System.out.println("delete selected photo : "+selectedPhoto.toString());
                             photoAdapter.photos.remove(selectedPhoto);
+                            System.out.println("thisalbum from delete : "+thisAlbum.getPhotos());
+                            System.out.println("Index of in delete : "+thisAlbum.getPhotos());
+                            int count =0;
+                            for (Photo p:thisAlbum.getPhotos()){
+                                System.out.println(p.getFile().toString());
+                                System.out.println("selectedphoto delete: "+selectedPhoto.getFile().toString());
+                                if(p.getFile().equals(selectedPhoto.getFile())){
+                                    System.out.println(count);
+                                    count++;
+                                }
+                            }
                             thisAlbum.removeFromAlbum(selectedPhoto);
 
+
                             System.out.println("thisalbum delete: "+thisAlbum.toString());
-                            System.out.println("selectedphoto delete: "+selectedPhoto.getFile().toString());
+                            //albumList.remove(albuminlist(thisAlbum.getName().toString()));
+                            //albumList.add(thisAlbum);
+
+
+
                             System.out.println("getphoto delete : "+albumList.get(albuminlist(thisAlbum.getName().toString())).getPhotos());
 
                             System.out.println("albumlist from delete : "+albumList.toString());
@@ -332,6 +353,8 @@ public class AlbumActivity extends Activity {
 
 
 
+
+
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Unable to open image", Toast.LENGTH_LONG).show();
@@ -342,5 +365,16 @@ public class AlbumActivity extends Activity {
     }}
 
 
+    private void openAlbum() {
+        if(selectedPhoto!=null) {
+            Intent openIntent = new Intent(getApplicationContext(), DisplayActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("selected_photo",selectedPhoto);
+            bundle.putSerializable("album", thisAlbum);
+            bundle.putSerializable("album_list", albumList);
+            openIntent.putExtras(bundle);
+            startActivity(openIntent);
+        }
+    }
 
 }

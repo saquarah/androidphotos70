@@ -70,7 +70,7 @@ public class Album implements Serializable{
 
     }
 
-    
+
     /**
      *
      * @return the list of photos that the album contains
@@ -78,6 +78,8 @@ public class Album implements Serializable{
     public List<Photo> getPhotos() {
         return photos;
     }
+
+
 
 }
 

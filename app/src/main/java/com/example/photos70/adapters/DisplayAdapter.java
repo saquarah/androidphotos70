@@ -7,17 +7,18 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.photos70.model.Photo;
 
 import java.util.ArrayList;
 
-public class PhotoAdapter extends BaseAdapter {
+public class DisplayAdapter extends BaseAdapter {
 
     private Context context;
     public ArrayList<Photo> photos;
 
-    public PhotoAdapter(Context context, ArrayList<Photo> photos) {
+    public DisplayAdapter(Context context, ArrayList<Photo> photos) {
         this.context = context;
         this.photos = photos;
 
@@ -47,7 +48,8 @@ public class PhotoAdapter extends BaseAdapter {
         imageView.setImageBitmap(bitmap);
         imageView.setPadding(5,5,5,5);
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        imageView.setLayoutParams(new GridView.LayoutParams(240, 240));
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(500,500);
+        imageView.setLayoutParams(layoutParams);
         return imageView;
     }
 }
