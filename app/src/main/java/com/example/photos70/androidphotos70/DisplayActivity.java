@@ -98,6 +98,8 @@ public class DisplayActivity extends Activity {
                     Bitmap myBitmap = BitmapFactory.decodeFile(path);
                     Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
                     imgView.setImageBitmap(resized);
+
+
                 }
 
             }
@@ -199,6 +201,10 @@ public class DisplayActivity extends Activity {
                     selectedPhoto= x.get(count);
                     System.out.println(selectedPhoto);
                     System.out.println(selectedPhoto.getFile());
+                    tagListView.setAdapter(null);
+                    tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, selectedPhoto.getTags());
+                    tagListView.setAdapter(tagAdapter);
+                    tagAdapter.notifyDataSetChanged();
                     return x.get(count).getFile();
 
                 }
@@ -236,6 +242,10 @@ public class DisplayActivity extends Activity {
                     selectedPhoto= x.get(count);
                     System.out.println(selectedPhoto);
                     System.out.println(selectedPhoto.getFile());
+                    tagListView.setAdapter(null);
+                    tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, selectedPhoto.getTags());
+                    tagListView.setAdapter(tagAdapter);
+                    tagAdapter.notifyDataSetChanged();
                     return x.get(count).getFile();
 
                 }
