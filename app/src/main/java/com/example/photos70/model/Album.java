@@ -78,6 +78,7 @@ public class Album implements Serializable{
     public List<Photo> getPhotos() {
         return photos;
     }
+    public void rmPhoto(int i){ photos.remove(i);}
 
 
 

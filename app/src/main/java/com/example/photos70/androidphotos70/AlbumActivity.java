@@ -91,7 +91,7 @@ public class AlbumActivity extends Activity {
     //nikky
     @Override
     public void onBackPressed(){
-        saveAlbumObject();
+        //saveAlbumObject();
         System.out.println("back pressed");
         finish();
     }
@@ -228,16 +228,20 @@ public class AlbumActivity extends Activity {
                     System.out.println("imageuri "+imageUri.getPath().toString());
                     //System.out.println("imageuri "+file.getAbsolutePath());
                     Photo photo = new Photo(bitmap,f);
+                    if(!(isAlreadyAdded(photo))) {
 
-                    //photoList.add(photo);
-                    thisAlbum.addToAlbum(photo);
+                        //photoList.add(photo);
+                        thisAlbum.addToAlbum(photo);
 
-                    albumList.get(albuminlist(thisAlbum.getName().toString())).addToAlbum(photo);
-                    System.out.println("this album "+thisAlbum.toString());
-                    System.out.println("albumlist arraylist "+ albumList.toString());
-                    photoAdapter.photos.add(photo);
-                    photoAdapter.notifyDataSetChanged();
-
+                        albumList.get(albuminlist(thisAlbum.getName().toString())).addToAlbum(photo);
+                        System.out.println("this album " + thisAlbum.toString());
+                        System.out.println("albumlist arraylist " + albumList.toString());
+                        photoAdapter.photos.add(photo);
+                        photoAdapter.notifyDataSetChanged();
+                        saveAlbumObject();
+                    }else{
+                        Toast.makeText(this, "Photo already added", Toast.LENGTH_LONG).show();
+                    }
 
 
                 } catch (FileNotFoundException e) {
@@ -247,6 +251,17 @@ public class AlbumActivity extends Activity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public boolean isAlreadyAdded(Photo photo){
+        for (Photo p:thisAlbum.getPhotos()){
+            //System.out.println(p.getFile().toString());
+            // System.out.println("selectedphoto delete: "+selectedPhoto.getFile().toString());
+            if(p.getFile().equals(photo.getFile())){
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getRealPathFromURI(Uri uri) {
@@ -276,32 +291,39 @@ public class AlbumActivity extends Activity {
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            System.out.println("photoadpater selected photo delete: "+photoAdapter.getItem(0));
-                            System.out.println("delete selected photo : "+selectedPhoto.toString());
+                           // System.out.println("photoadpater selected photo delete: "+photoAdapter.getItem(0));
+                           // System.out.println("delete selected photo : "+selectedPhoto.toString());
                             photoAdapter.photos.remove(selectedPhoto);
-                            System.out.println("thisalbum from delete : "+thisAlbum.getPhotos());
-                            System.out.println("Index of in delete : "+thisAlbum.getPhotos());
+                           // System.out.println("thisalbum from delete : "+thisAlbum.getPhotos());
+                           // System.out.println("Index of in delete : "+thisAlbum.getPhotos());
                             int count =0;
                             for (Photo p:thisAlbum.getPhotos()){
                                 System.out.println(p.getFile().toString());
                                 System.out.println("selectedphoto delete: "+selectedPhoto.getFile().toString());
                                 if(p.getFile().equals(selectedPhoto.getFile())){
-                                    System.out.println(count);
+                                    //System.out.println("match found count : "+count);
+                                    thisAlbum.rmPhoto(count);
+                                    albumList.get(albuminlist(thisAlbum.getName().toString())).rmPhoto(count);
+                                    saveAlbumObject();
+                                    //System.out.println(count);
+                                    count++;
+                                    break;
+                                }else {
                                     count++;
                                 }
                             }
-                            thisAlbum.removeFromAlbum(selectedPhoto);
+                            //thisAlbum.removeFromAlbum(selectedPhoto);
 
 
-                            System.out.println("thisalbum delete: "+thisAlbum.toString());
+                           // System.out.println("thisalbum delete: "+thisAlbum.toString());
                             //albumList.remove(albuminlist(thisAlbum.getName().toString()));
                             //albumList.add(thisAlbum);
 
 
 
-                            System.out.println("getphoto delete : "+albumList.get(albuminlist(thisAlbum.getName().toString())).getPhotos());
+                            //System.out.println("getphoto delete : "+albumList.get(albuminlist(thisAlbum.getName().toString())).getPhotos());
 
-                            System.out.println("albumlist from delete : "+albumList.toString());
+                           // System.out.println("albumlist from delete : "+albumList.toString());
                             photoAdapter.notifyDataSetChanged();
                             selectedPhoto = null;
                             Toast.makeText(AlbumActivity.this, "Photo Deleted", Toast.LENGTH_SHORT).show();

@@ -99,14 +99,29 @@ public class DisplayActivity extends Activity {
                 if(!(path==null)) {
 
                     Bitmap myBitmap = BitmapFactory.decodeFile(path);
-                    Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 500, 500, true);
+                    Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
                     imgView.setImageBitmap(resized);
                 }
 
             }
         });
 
+        Button prevBtn = (Button) findViewById(R.id.previous);
+        prevBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("prev button clicked");
+                //System.out.println(getNextFilePath());
+                String path=getPreviousFilePath();
+                if(!(path==null)) {
 
+                    Bitmap myBitmap = BitmapFactory.decodeFile(path);
+                    Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
+                    imgView.setImageBitmap(resized);
+                }
+
+            }
+        });
 
     }
 
@@ -169,13 +184,14 @@ public class DisplayActivity extends Activity {
             System.out.println("p.getFile() : "+p.getFile());
             System.out.println("selectedPhoto.getFile() : "+selectedPhoto.getFile());
             if(p.getFile().equals(selectedPhoto.getFile())){
-
-                if(count == size){
+                System.out.println(count);
+                System.out.println(size);
+                if(count == size-1){
 
                     return null;
                 }else{
                     count++;
-                    System.out.println(count);
+                    System.out.println("else: "+count);
                     System.out.println("p inside else: "+p);
                     System.out.println("p file inside else"+p.getFile());
                     System.out.println("x :"+x.get(count));
@@ -191,9 +207,46 @@ public class DisplayActivity extends Activity {
             }
 
         }
-    return null;
+        return null;
     }
 
+    public String getPreviousFilePath(){
+        int size = thisAlbum.getPhotos().size();
+        int count = 0;
+
+        System.out.println(thisAlbum.toString());
+        List<Photo> x = thisAlbum.getPhotos();
+
+        for(Photo p : thisAlbum.getPhotos()){
+            System.out.println("p.getFile() : "+p.getFile());
+            System.out.println("selectedPhoto.getFile() : "+selectedPhoto.getFile());
+            if(p.getFile().equals(selectedPhoto.getFile())){
+                System.out.println(count);
+                System.out.println(size);
+                if(count == 0){
+
+                    return null;
+                }else{
+                    count--;
+                    System.out.println("else: "+count);
+                    System.out.println("p inside else: "+p);
+                    System.out.println("p file inside else"+p.getFile());
+                    System.out.println("x :"+x.get(count));
+                    selectedPhoto= x.get(count);
+                    System.out.println(selectedPhoto);
+                    System.out.println(selectedPhoto.getFile());
+                    return x.get(count).getFile();
+
+                }
+
+            }else {
+                count++;
+            }
+
+        }
+
+        return null;
+    }
 
     private void addTagDialog() {
         tagType = "Person";
