@@ -57,6 +57,7 @@ public class DisplayActivity extends Activity {
     private int selectedTagInt;
     private Album newAlbum;
     private String new_Album;
+    private ImageView imgView;
 
 
 
@@ -102,7 +103,7 @@ public class DisplayActivity extends Activity {
         System.out.println(selectedPhoto.getFile().toString());
         System.out.println(thisAlbum.toString());
 
-        ImageView imgView = findViewById(R.id.imgView);
+         imgView = findViewById(R.id.imgView);
 
 
         //imgView.setAdapter(displayAdapter);
@@ -297,6 +298,27 @@ public class DisplayActivity extends Activity {
             if(p.getFile().equals(photo.getFile())){
 
                 System.out.println("delete photo form this album count : "+count);
+                ////////////////
+                String path=getNextFilePath();
+                System.out.println("path from delete : "+path);
+                if(!(path==null)) {
+
+                    Bitmap myBitmap = BitmapFactory.decodeFile(path);
+                    Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
+                    imgView.setImageBitmap(resized);
+                    for (Tag t:albumList.get(albuminlist(thisAlbum.getName())).getPhoto(photoinAlbum()).getTags()){
+                        selectedPhoto.addTag(t.getTag(),t.getValue());
+                    }
+                    tagAdapter.notifyDataSetChanged();
+                    resetSelection();
+
+
+                }else{
+
+                }
+
+
+                /////////////////
                 thisAlbum.rmPhoto(count);
                 albumList.get(albuminlist(thisAlbum.getName().toString())).rmPhoto(count);
                 saveAlbumObject();
