@@ -20,7 +20,9 @@ import com.example.photos70.model.Photo;
 import com.example.photos70.model.Tag;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -41,10 +43,11 @@ public class SearchActivity extends Activity {
 
         Bundle bundle = getIntent().getExtras();
         albumList = (ArrayList<Album>) bundle.getSerializable("album_list");
+        fillAllPhotosList();
 
         // TODO will need to set the photo adapter after the search has happened
         gridView = findViewById(R.id.gridViewSearch);
-        photoAdapter = new PhotoAdapter(this, searchResults);
+        photoAdapter = new PhotoAdapter(this, new ArrayList<Photo>());
         gridView.setAdapter(photoAdapter);
 
     }
@@ -94,7 +97,7 @@ public class SearchActivity extends Activity {
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String tagValue = input.getText().toString().trim();
@@ -120,6 +123,7 @@ public class SearchActivity extends Activity {
     private void search(String type, String value) {
         // this is a dumb and repetitive way of doing this but i do not care at this stage
         searchResults.clear();
+        photoAdapter.photos.clear();
         for(Photo p: allPhotos) {
 
             if(type.equals("Person")) { // person only
@@ -164,8 +168,46 @@ public class SearchActivity extends Activity {
 
         }
 
-        photoAdapter.notifyDataSetChanged();
+       loadPhotosList();
 
     }
+
+    private void loadPhotosList() {
+        System.out.println("loadphotolist "+searchResults.size());
+        for(Photo p: searchResults) {
+            System.out.println("loadphoto "+p.getFile());
+
+            File f = new File(p.getFile());
+
+            if (f.exists()) {
+                System.out.println("found");
+            } else {
+                System.out.println("not found");
+            }
+
+            InputStream inputStream;
+            try {
+
+                Bitmap myBitmap = BitmapFactory.decodeFile(f.getPath());
+
+
+                Photo photo = new Photo(myBitmap,f);
+
+                photoAdapter.photos.add(photo);
+                photoAdapter.notifyDataSetChanged();
+
+
+
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Unable to open image", Toast.LENGTH_LONG).show();
+            }
+            //photoList.add(p);
+            //photoAdapter.photos.add(p);
+
+        }}
+
 
 }
