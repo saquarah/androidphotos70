@@ -193,6 +193,8 @@ public class DisplayActivity extends Activity {
 
                     return null;
                 }else{
+                    x.set(count, selectedPhoto); // fixes the weird error
+
                     count++;
                     System.out.println("else: "+count);
                     System.out.println("p inside else: "+p);
@@ -234,6 +236,7 @@ public class DisplayActivity extends Activity {
 
                     return null;
                 }else{
+                    x.set(count, selectedPhoto);
                     count--;
                     System.out.println("else: "+count);
                     System.out.println("p inside else: "+p);
