@@ -266,7 +266,7 @@ public class DisplayActivity extends Activity {
         
 
         movePhotoToNewAlbum(newAlbum);
-        deletePhotoFromThisAlbum(selectedPhoto);
+
 
 
 
@@ -302,11 +302,13 @@ public class DisplayActivity extends Activity {
             System.out.println("new album " + newAlbum.toString());
             System.out.println("albumlist arraylist " + albumList.toString());
 
+            deletePhotoFromThisAlbum(selectedPhoto);
+
             saveAlbumObject();
             Toast.makeText(this, "Photo Move Successfully", Toast.LENGTH_LONG).show();
 
         }else{
-            Toast.makeText(this, "Photo already added", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Photo already exists.", Toast.LENGTH_LONG).show();
         }
     }
     private boolean isAlreadyAddedInNew(Photo photo){
