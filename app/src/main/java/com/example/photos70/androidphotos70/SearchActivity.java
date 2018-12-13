@@ -3,6 +3,8 @@ package com.example.photos70.androidphotos70;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Menu;
@@ -17,13 +19,15 @@ import com.example.photos70.model.Album;
 import com.example.photos70.model.Photo;
 import com.example.photos70.model.Tag;
 
+import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class SearchActivity extends Activity {
 
     private ArrayList<Album> albumList;
-    private ArrayList<Photo> allPhotos;
+    private ArrayList<Photo> allPhotos = new ArrayList<Photo>();
     private ArrayList<Photo> searchResults = new ArrayList<Photo>();
     private PhotoAdapter photoAdapter;
     private GridView gridView;
@@ -65,7 +69,11 @@ public class SearchActivity extends Activity {
     }
 
     private void fillAllPhotosList() {
-        //TODO should probably be implemented after deserialization
+        for(Album a: albumList) {
+            for(Photo p: a.getPhotos()) {
+                allPhotos.add(p);
+            }
+        }
     }
 
     private void searchDialog() {
