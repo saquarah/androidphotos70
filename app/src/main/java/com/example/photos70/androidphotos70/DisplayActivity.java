@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,6 +54,7 @@ public class DisplayActivity extends Activity {
     private Tag selectedTag;
     private String tagType;
     private int sp;
+    private int selectedTagInt;
 
 
     @Override
@@ -71,9 +73,12 @@ public class DisplayActivity extends Activity {
         loadSerializedObject();
 
         sp = photoinAlbum();
+
         // setting up tag adapter and listView
         //tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, selectedPhoto.getTags());
-
+        for (Tag t:albumList.get(albuminlist(thisAlbum.getName())).getPhoto(sp).getTags()){
+            selectedPhoto.addTag(t.getTag(),t.getValue());
+        }
         System.out.println("oncreate : photoinALbum() : "+sp);
         System.out.println("on create thisalbum: "+thisAlbum.getPhoto(sp).getTags());
         System.out.println("on create albumlist: "+albumList.get(albuminlist(thisAlbum.getName())).getPhoto(sp).getTags());
@@ -83,6 +88,8 @@ public class DisplayActivity extends Activity {
         tagListView = (ListView) findViewById(R.id.tagsList);
         tagListView.setAdapter(tagAdapter);
         tagListView.setOnItemClickListener( (p,v,pos,id) -> selectTag(pos) );
+
+
 
         System.out.println(albumList.toString());
         System.out.println(selectedPhoto.getFile().toString());
@@ -112,6 +119,9 @@ public class DisplayActivity extends Activity {
                     Bitmap myBitmap = BitmapFactory.decodeFile(path);
                     Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
                     imgView.setImageBitmap(resized);
+                    for (Tag t:albumList.get(albuminlist(thisAlbum.getName())).getPhoto(photoinAlbum()).getTags()){
+                        selectedPhoto.addTag(t.getTag(),t.getValue());
+                    }
                     tagAdapter.notifyDataSetChanged();
                     resetSelection();
 
@@ -133,6 +143,9 @@ public class DisplayActivity extends Activity {
                     Bitmap myBitmap = BitmapFactory.decodeFile(path);
                     Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
                     imgView.setImageBitmap(resized);
+                    for (Tag t:albumList.get(albuminlist(thisAlbum.getName())).getPhoto(photoinAlbum()).getTags()){
+                        selectedPhoto.addTag(t.getTag(),t.getValue());
+                    }
                     tagAdapter.notifyDataSetChanged();
                     resetSelection();
                 }
@@ -232,6 +245,10 @@ public class DisplayActivity extends Activity {
         }
         return count;
     }
+
+    //public int tagInPhoto(){
+    //    return ;
+    //}
 
     //added to check if album name is in albumList - not sure if we need this. is there a default album need in photo?
     public int albuminlist(String album_name){
@@ -401,10 +418,25 @@ public class DisplayActivity extends Activity {
     }
 
     private void deleteTag() {
+        System.out.println("selectedTag in delete : "+selectedTag);
+
         selectedPhoto.getTags().remove(selectedTag);
         selectedTag = null;
+
+        int count =0;
+        for (Photo p:thisAlbum.getPhotos()){
+            System.out.println(count);
+            if(p.getFile().equals(selectedPhoto.getFile())){
+                albumList.get(albuminlist(thisAlbum.getName().toString())).getPhoto(photoinAlbum()).removeTag(selectedTagInt);
+                count++;
+                saveAlbumObject();
+            }else{
+                count++;
+            }
+        }
         tagAdapter.notifyDataSetChanged();
         resetSelection();
+
     }
 
     private void addTag(String tag, String value) throws Exception {
@@ -438,7 +470,11 @@ public class DisplayActivity extends Activity {
 
 
     private void selectTag(int pos) {
+        System.out.println("selectTag pos : "+pos);
         selectedTag = selectedPhoto.getTags().get(pos);
+        selectedTagInt = pos;
+        System.out.println("selectTag pos : "+pos);
+        System.out.println("selectTag  : "+selectedTag);
     }
 
     private void resetSelection() {

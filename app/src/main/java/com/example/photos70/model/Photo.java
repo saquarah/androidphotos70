@@ -89,6 +89,15 @@ public class Photo implements Serializable {
         tags.add(newTag);
     }
 
+    public void removeTag(int i){
+        tags.remove(i);
+
+    }
+    public void removeTag(Tag t){
+        tags.remove(t);
+
+    }
+
 //    private void writeObject(ObjectOutputStream out) throws IOException {
 //        out.defaultWriteObject();
 //
