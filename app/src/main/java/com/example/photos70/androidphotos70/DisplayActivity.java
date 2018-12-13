@@ -67,9 +67,6 @@ public class DisplayActivity extends Activity {
 
         loadSerializedObject();
 
-        if(selectedPhoto.getTags() == null) {
-
-        }
 
         // setting up tag adapter and listView
         tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, selectedPhoto.getTags());
@@ -141,6 +138,10 @@ public class DisplayActivity extends Activity {
                 addTagDialog();
                 break;
             case R.id.deleteTag:
+                if(selectedTag == null) {
+                    Toast.makeText(getBaseContext(), "No tag selected", Toast.LENGTH_LONG).show();
+                    break;
+                }
                 deleteTagDialog();
                 break;
         }
@@ -295,7 +296,31 @@ public class DisplayActivity extends Activity {
     }
 
     private void deleteTagDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure you want to delete this tag?");
 
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteTag();
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void deleteTag() {
+        selectedPhoto.getTags().remove(selectedTag);
+        selectedTag = null;
+        tagAdapter.notifyDataSetChanged();
+        resetSelection();
     }
 
     private void addTag(String tag, String value) throws Exception {
