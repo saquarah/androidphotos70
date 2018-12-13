@@ -199,74 +199,97 @@ public class DisplayActivity extends Activity {
 
     private void selectAlbumDialog() {
         int sizeofAlbumlist = albumList.size();
+        if(sizeofAlbumlist>1) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose the Album");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Choose the Album");
 
-        String[] choiceTypes = new String[sizeofAlbumlist-1];
-        int i =0;
-        int c = 0;
-        while(i<sizeofAlbumlist){
-            //System.out.println(i);
-            //System.out.println(albumList.get(i).getName());
-            if(!(thisAlbum.getName().equals(albumList.get(i).getName()))) {
-                choiceTypes[c] = albumList.get(i).getName();
-                c++;
-            }
-            i++;
-        }
-
-
-        new_Album = choiceTypes[0];
-
-
-        builder.setSingleChoiceItems(choiceTypes, 0, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                new_Album = choiceTypes[which];
-
-
-
-            }
-        });
-
-
-
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                try {
-                    System.out.println("trying something !!!!!!!!!!!!!!!");
-                    newAlbum  = albumList.get(albuminlist(new_Album));
-                    System.out.println("this is new album : "+newAlbum);
-
-                    moveAlbum(newAlbum, thisAlbum);
-                } catch (Exception e) {
-                    dialog.cancel();
-                    Toast.makeText(getBaseContext(), "This tag already exists.", Toast.LENGTH_LONG).show();
+            String[] choiceTypes = new String[sizeofAlbumlist - 1];
+            int i = 0;
+            int c = 0;
+            while (i < sizeofAlbumlist) {
+                //System.out.println(i);
+                //System.out.println(albumList.get(i).getName());
+                if (!(thisAlbum.getName().equals(albumList.get(i).getName()))) {
+                    choiceTypes[c] = albumList.get(i).getName();
+                    c++;
                 }
+                i++;
             }
-        });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
 
-        builder.show();
+            new_Album = choiceTypes[0];
+
+
+            builder.setSingleChoiceItems(choiceTypes, 0, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    new_Album = choiceTypes[which];
+
+
+                }
+            });
+
+
+            builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    try {
+                        System.out.println("trying something !!!!!!!!!!!!!!!");
+                        newAlbum = albumList.get(albuminlist(new_Album));
+                        System.out.println("this is new album : " + newAlbum);
+
+                        moveAlbum(newAlbum, thisAlbum);
+                    } catch (Exception e) {
+                        dialog.cancel();
+                        Toast.makeText(getBaseContext(), "This tag already exists.", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        } else{
+            Toast.makeText(getBaseContext(), "There is only one album.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void moveAlbum(Album newAlbum,Album thisAlbum){
         
 
         movePhotoToNewAlbum(newAlbum);
+        deletePhotoFromThisAlbum(selectedPhoto);
 
 
 
+    }
+
+    private void deletePhotoFromThisAlbum(Photo photo){
+        int count =0;
+        System.out.println("delete photo form this album count : "+count);
+        for (Photo p : thisAlbum.getPhotos()){
+            if(p.getFile().equals(photo.getFile())){
+
+                System.out.println("delete photo form this album count : "+count);
+                thisAlbum.rmPhoto(count);
+                albumList.get(albuminlist(thisAlbum.getName().toString())).rmPhoto(count);
+                saveAlbumObject();
+                //System.out.println(count);
+                count++;
+                break;
+            }else {
+                count++;
+            }
+
+        }
     }
 
     private void movePhotoToNewAlbum(Album newAlbum){
@@ -280,6 +303,8 @@ public class DisplayActivity extends Activity {
             System.out.println("albumlist arraylist " + albumList.toString());
 
             saveAlbumObject();
+            Toast.makeText(this, "Photo Move Successfully", Toast.LENGTH_LONG).show();
+
         }else{
             Toast.makeText(this, "Photo already added", Toast.LENGTH_LONG).show();
         }

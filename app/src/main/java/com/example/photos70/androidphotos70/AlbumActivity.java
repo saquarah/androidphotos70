@@ -19,14 +19,17 @@ import android.view.View;
 import android.webkit.PermissionRequest;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.photos70.adapters.PhotoAdapter;
 import com.example.photos70.model.Album;
 import com.example.photos70.model.Photo;
+import com.example.photos70.model.Tag;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,6 +52,11 @@ public class AlbumActivity extends Activity {
     private Photo selectedPhoto;
     private ArrayList<ImageView> imageViewArrayList;
     private PhotoAdapter photoAdapter;
+    private ArrayAdapter<Tag> tagAdapter;
+    private ListView tagListView;
+    private Tag selectedTag;
+    private Album newAlbum;
+    private String new_Album;
 
 
 
@@ -347,10 +355,66 @@ public class AlbumActivity extends Activity {
     @Override
     protected void onRestart(){
         super.onRestart();
-        System.out.println("something"+photoList.size());
-        //System.out.println("onresume"+photoAdapter.photos.isEmpty());
-    }
+        //System.out.println("something"+thisAlbum.getPhotos().size());
+        loadSerializedObject();
+        System.out.println("something :" + albumList.get(albuminlist(thisAlbum.getName())).getPhotos().size());
+        System.out.println("something"+thisAlbum.getPhotos().size());
+        //thisAlbum=albumList.get(albuminlist(thisAlbum.getName()));
 
+        int index = albuminlist(thisAlbum.getName());
+        if(thisAlbum.getPhotos().size()!=albumList.get(index).getPhotos().size()) {
+            int i = 0;
+            //int index = albuminlist(thisAlbum.getName());
+            System.out.println("index :" + index);
+            //photoAdapter.photos.remove(0);
+            while (i <= thisAlbum.getPhotos().size()) {
+                System.out.println("something : " + thisAlbum.getPhotos().size());
+                System.out.println("something :" + albumList.get(index).getPhotos().size());
+                System.out.println("Restart : " + i);
+                if (i < albumList.get(index).getPhotos().size()) {
+                    System.out.println("Restart i: " + i);
+                    System.out.println("Restart i this: " + thisAlbum.getPhoto(i).getFile());
+                    System.out.println("Restart i album: " + albumList.get(index).getPhoto(i).getFile());
+
+                    if (!(thisAlbum.getPhoto(i).getFile().equals(albumList.get(index).getPhoto(i).getFile()))) {
+                        System.out.println("removed photo");
+                        photoAdapter.photos.remove(i);
+                        thisAlbum.removeFromAlbum(thisAlbum.getPhoto(i));
+
+                        saveAlbumObject();
+                        loadSerializedObject();
+                        photoAdapter.notifyDataSetChanged();
+                        System.out.println("photoadptr count : " + photoAdapter.getCount());
+                        selectedPhoto = null;
+                        i++;
+                        break;
+                    } else {
+                        System.out.println("Restart else i: " + i);
+                        i++;
+                    }
+                } else {
+                    System.out.println("Restart else photoremove i: " + i);
+
+                    photoAdapter.photos.remove(i);
+                    thisAlbum.removeFromAlbum(thisAlbum.getPhoto(i));
+
+                    saveAlbumObject();
+                    loadSerializedObject();
+                    photoAdapter.notifyDataSetChanged();
+                    selectedPhoto = null;
+                    i++;
+                    break;
+                }
+
+            }
+
+            photoAdapter.notifyDataSetChanged();
+            selectedPhoto = null;
+
+            System.out.println(photoAdapter.getCount());
+            System.out.println("onresume" + photoAdapter.photos.isEmpty());
+        }
+    }
     private void loadPhotosList() {
         System.out.println("loadphotolist "+thisAlbum.getPhotos().size());
         for(Photo p: thisAlbum.getPhotos()) {
