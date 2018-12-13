@@ -137,7 +137,6 @@ public class AlbumActivity extends Activity {
 
                 break;
             case R.id.deletePhoto:
-                //TODO implement deletePhoto
                // System.out.println("delete press");
                 //System.out.println(photoList.size());
                 deletePhotoDialog();
@@ -146,7 +145,6 @@ public class AlbumActivity extends Activity {
 
                 break;
             case R.id.displayItem:
-                //TODO transfer to display screen
                 openAlbum();
                 break;
         }
@@ -335,8 +333,6 @@ public class AlbumActivity extends Activity {
 
 
     }
-
-    private void displayPhoto() {}
 
     @Override
     protected void onRestart(){

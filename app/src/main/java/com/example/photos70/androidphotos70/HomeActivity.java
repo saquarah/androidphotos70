@@ -56,10 +56,9 @@ public class HomeActivity extends Activity {
             }
 
 
-
         selectedAlbum = null; // no selection upon entering activity
         //if(!albuminlist("test")) {
-          //  albumList.add(new Album("test")); //TODO TEST ALBUM: DELETE ME LATER
+          //  albumList.add(new Album("test"));
         //}
         albumArrayAdapter = new ArrayAdapter<Album>(this, R.layout.albums_listview_detail, albumList);
         albumsListView = (ListView) findViewById(R.id.albumsListView);
