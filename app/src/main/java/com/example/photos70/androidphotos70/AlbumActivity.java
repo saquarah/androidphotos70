@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.webkit.PermissionRequest;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -43,9 +45,12 @@ public class AlbumActivity extends Activity {
     private ArrayList<Photo> photoList = new ArrayList<Photo>();
     private ArrayList<Album> albumList;
     private Album thisAlbum;
+
     private Photo selectedPhoto;
     private ArrayList<ImageView> imageViewArrayList;
     private PhotoAdapter photoAdapter;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,10 +153,13 @@ public class AlbumActivity extends Activity {
             case R.id.displayItem:
                 openAlbum();
                 break;
+
         }
         // Not sure if this is needed
         return super.onOptionsItemSelected(item);
     }
+
+
 
     private void askForPhoto() {
         //invoke the image gallery using implicit intent
@@ -191,13 +199,14 @@ public class AlbumActivity extends Activity {
     //added to check if album name is in albumList - not sure if we need this. is there a default album need in photo?
     public int albuminlist(String album_name){
         int found=-1;
-        //System.out.println("albuminlist "+album_name);
+        System.out.println("albuminlist "+album_name);
         for (int i=0;i<albumList.size();i++) {
             //System.out.println(userList.get(i).toString());
             if(albumList.get(i).getName().equals(album_name)) {
                 found = i;
             }
         }
+        System.out.println("found : "+found);
         return found;
     }
 

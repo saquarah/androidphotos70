@@ -55,6 +55,9 @@ public class DisplayActivity extends Activity {
     private String tagType;
     private int sp;
     private int selectedTagInt;
+    private Album newAlbum;
+    private String new_Album;
+
 
 
     @Override
@@ -177,9 +180,121 @@ public class DisplayActivity extends Activity {
                 }
                 deleteTagDialog();
                 break;
+            case R.id.moveToAlbum:
+                moveToAlbum();
+                break;
+
         }
         // Not sure if this is needed
         return super.onOptionsItemSelected(item);
+    }
+
+    public void moveToAlbum(){
+        if(selectedPhoto==null){
+            Toast.makeText(this, "No Photo Selected", Toast.LENGTH_SHORT).show();
+        }else{
+            selectAlbumDialog();
+        }
+    }
+
+    private void selectAlbumDialog() {
+        int sizeofAlbumlist = albumList.size();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose the Album");
+
+        String[] choiceTypes = new String[sizeofAlbumlist-1];
+        int i =0;
+        int c = 0;
+        while(i<sizeofAlbumlist){
+            //System.out.println(i);
+            //System.out.println(albumList.get(i).getName());
+            if(!(thisAlbum.getName().equals(albumList.get(i).getName()))) {
+                choiceTypes[c] = albumList.get(i).getName();
+                c++;
+            }
+            i++;
+        }
+
+
+        new_Album = choiceTypes[0];
+
+
+        builder.setSingleChoiceItems(choiceTypes, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                new_Album = choiceTypes[which];
+
+
+
+            }
+        });
+
+
+
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                try {
+                    System.out.println("trying something !!!!!!!!!!!!!!!");
+                    newAlbum  = albumList.get(albuminlist(new_Album));
+                    System.out.println("this is new album : "+newAlbum);
+
+                    moveAlbum(newAlbum, thisAlbum);
+                } catch (Exception e) {
+                    dialog.cancel();
+                    Toast.makeText(getBaseContext(), "This tag already exists.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void moveAlbum(Album newAlbum,Album thisAlbum){
+        
+
+        movePhotoToNewAlbum(newAlbum);
+
+
+
+    }
+
+    private void movePhotoToNewAlbum(Album newAlbum){
+        if(!(isAlreadyAddedInNew(selectedPhoto))) {
+
+            //photoList.add(photo);
+            //newAlbum.addToAlbum(selectedPhoto);
+
+            albumList.get(albuminlist(newAlbum.getName().toString())).addToAlbum(selectedPhoto);
+            System.out.println("new album " + newAlbum.toString());
+            System.out.println("albumlist arraylist " + albumList.toString());
+
+            saveAlbumObject();
+        }else{
+            Toast.makeText(this, "Photo already added", Toast.LENGTH_LONG).show();
+        }
+    }
+    private boolean isAlreadyAddedInNew(Photo photo){
+
+        for (Photo p:newAlbum.getPhotos()){
+            //System.out.println(p.getFile().toString());
+            // System.out.println("selectedphoto delete: "+selectedPhoto.getFile().toString());
+            if(p.getFile().equals(photo.getFile())){
+                return true;
+            }
+        }
+        return false;
+
     }
 
     //added to Serialize the ablum

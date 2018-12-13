@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/addPhoto"
+    <item
+        android:id="@+id/addPhoto"
         android:icon="@drawable/ic_add_black_24dp"
-        android:title="Add Photo"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="always"
+        android:title="Add Photo" />
 
-    <item android:id="@+id/deletePhoto"
+    <item
+        android:id="@+id/deletePhoto"
         android:icon="@drawable/ic_delete_black_24dp"
+        android:showAsAction="always"
         android:title="Delete Photo"
-        android:showAsAction="ifRoom" />
+        android:visible="true" />
 
-    <item android:id="@+id/displayItem"
+    <item
+        android:id="@+id/displayItem"
         android:icon="@drawable/ic_image_black_24dp"
+        android:showAsAction="always"
         android:title="Display Photo"
-        android:showAsAction="ifRoom"/>
+        android:visible="true" />
 </menu>
