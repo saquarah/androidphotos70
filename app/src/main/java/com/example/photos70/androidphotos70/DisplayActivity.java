@@ -32,8 +32,10 @@ import com.example.photos70.model.Tag;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +52,7 @@ public class DisplayActivity extends Activity {
     private ListView tagListView;
     private Tag selectedTag;
     private String tagType;
+    private int sp;
 
 
     @Override
@@ -67,9 +70,16 @@ public class DisplayActivity extends Activity {
 
         loadSerializedObject();
 
-
+        sp = photoinAlbum();
         // setting up tag adapter and listView
-        tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, selectedPhoto.getTags());
+        //tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, selectedPhoto.getTags());
+
+        System.out.println("oncreate : photoinALbum() : "+sp);
+        System.out.println("on create thisalbum: "+thisAlbum.getPhoto(sp).getTags());
+        System.out.println("on create albumlist: "+albumList.get(albuminlist(thisAlbum.getName())).getPhoto(sp).getTags());
+        System.out.println("on create selected photo: "+selectedPhoto.getTags());
+        tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, albumList.get(albuminlist(thisAlbum.getName())).getPhoto(sp).getTags());
+
         tagListView = (ListView) findViewById(R.id.tagsList);
         tagListView.setAdapter(tagAdapter);
         tagListView.setOnItemClickListener( (p,v,pos,id) -> selectTag(pos) );
@@ -85,6 +95,10 @@ public class DisplayActivity extends Activity {
         Bitmap myBitmap = BitmapFactory.decodeFile(selectedPhoto.getFile());
         Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
         imgView.setImageBitmap(resized);
+        //tagAdapter.notifyDataSetChanged();
+        //resetSelection();
+
+
 
         Button nextBtn = (Button) findViewById(R.id.next);
         nextBtn.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +112,8 @@ public class DisplayActivity extends Activity {
                     Bitmap myBitmap = BitmapFactory.decodeFile(path);
                     Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
                     imgView.setImageBitmap(resized);
+                    tagAdapter.notifyDataSetChanged();
+                    resetSelection();
 
 
                 }
@@ -117,6 +133,8 @@ public class DisplayActivity extends Activity {
                     Bitmap myBitmap = BitmapFactory.decodeFile(path);
                     Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
                     imgView.setImageBitmap(resized);
+                    tagAdapter.notifyDataSetChanged();
+                    resetSelection();
                 }
 
             }
@@ -151,6 +169,25 @@ public class DisplayActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    //added to Serialize the ablum
+    public void saveAlbumObject(){
+        try {
+            System.out.println(getFilesDir().toString());
+            File outputFile = new File(getFilesDir(),"save_object.bin");
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(outputFile));
+            oos.writeObject(albumList);
+            oos.flush();
+            oos.close();
+            //System.out.println("saved photo in AlbumActivity.java");
+        }catch (java.io.IOException e){
+            System.out.println("saved album error");
+            System.out.println(e.fillInStackTrace().toString());
+
+        }
+
+
+    }
+
     //added to de-Serialize the ablum
     public Object loadSerializedObject(){
         try{
@@ -173,6 +210,40 @@ public class DisplayActivity extends Activity {
             e.printStackTrace();
         }
         return null;
+    }
+
+    //added to check if album name is in albumList - not sure if we need this. is there a default album need in photo?
+    public int photoinAlbum(){
+        int count =0;
+        for (Photo p:thisAlbum.getPhotos()){
+            //System.out.println(p.getFile().toString());
+            //System.out.println("selectedphoto delete: "+selectedPhoto.getFile().toString());
+            if(p.getFile().equals(selectedPhoto.getFile())){
+                System.out.println("photoinAlbum : p.getFile() :"+p.getFile());
+                System.out.println("photoinAlbum : selectedPhoto.getFile() :"+selectedPhoto.getFile());
+                System.out.println("PhotoinAlbum : "+ count);
+                return count;
+
+            }else {
+                count++;
+            }
+
+
+        }
+        return count;
+    }
+
+    //added to check if album name is in albumList - not sure if we need this. is there a default album need in photo?
+    public int albuminlist(String album_name){
+        int found=-1;
+        //System.out.println("albuminlist "+album_name);
+        for (int i=0;i<albumList.size();i++) {
+            //System.out.println(userList.get(i).toString());
+            if(albumList.get(i).getName().equals(album_name)) {
+                found = i;
+            }
+        }
+        return found;
     }
 
 
@@ -204,7 +275,7 @@ public class DisplayActivity extends Activity {
                     System.out.println(selectedPhoto);
                     System.out.println(selectedPhoto.getFile());
                     tagListView.setAdapter(null);
-                    tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, selectedPhoto.getTags());
+                    tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, albumList.get(albuminlist(thisAlbum.getName())).getPhoto(photoinAlbum()).getTags());
                     tagListView.setAdapter(tagAdapter);
                     tagAdapter.notifyDataSetChanged();
                     return x.get(count).getFile();
@@ -246,7 +317,7 @@ public class DisplayActivity extends Activity {
                     System.out.println(selectedPhoto);
                     System.out.println(selectedPhoto.getFile());
                     tagListView.setAdapter(null);
-                    tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, selectedPhoto.getTags());
+                    tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, albumList.get(albuminlist(thisAlbum.getName())).getPhoto(photoinAlbum()).getTags());
                     tagListView.setAdapter(tagAdapter);
                     tagAdapter.notifyDataSetChanged();
                     return x.get(count).getFile();
@@ -342,8 +413,26 @@ public class DisplayActivity extends Activity {
                 throw new Exception();
             }
         }
+        int count =0;
         System.out.println(selectedPhoto.getTags().toString());
         selectedPhoto.getTags().add(new Tag(tag, value));
+        for (Photo p:thisAlbum.getPhotos()){
+            System.out.println("printing all tags for albumlist count : " +count);
+
+            System.out.println("printing all tags for albumlist : " +albumList.get(albuminlist(thisAlbum.getName().toString())).getPhoto(count).getTags());
+            if(p.getFile().equals(selectedPhoto.getFile())){
+               // p.addTag(tag, value);
+               // thisAlbum.getPhoto(count).addTag(tag,value);
+
+                albumList.get(albuminlist(thisAlbum.getName().toString())).getPhoto(count).addTag(tag,value);
+                System.out.println(albumList.get(albuminlist(thisAlbum.getName().toString())).getPhoto(count).getTags());
+                count++;
+                saveAlbumObject();
+
+            }else{
+                count++;
+            }
+        }
         tagAdapter.notifyDataSetChanged();
     }
 

@@ -81,6 +81,7 @@ public class AlbumActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedPhoto = photoAdapter.photos.get(position);
+                //System.out.println("albumactivity : "+selectedPhoto.getTags());
 
 
             }
