@@ -79,9 +79,13 @@ public class DisplayActivity extends Activity {
 
         // setting up tag adapter and listView
         //tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, selectedPhoto.getTags());
-        for (Tag t:albumList.get(albuminlist(thisAlbum.getName())).getPhoto(sp).getTags()){
-            selectedPhoto.addTag(t.getTag(),t.getValue());
-        }
+
+            for (Tag t : albumList.get(albuminlist(thisAlbum.getName())).getPhoto(sp).getTags()) {
+                if(!selectedPhoto.getTags().contains(t)) {
+                    selectedPhoto.addTag(t.getTag(), t.getValue());
+                }
+            }
+
         System.out.println("oncreate : photoinALbum() : "+sp);
         System.out.println("on create thisalbum: "+thisAlbum.getPhoto(sp).getTags());
         System.out.println("on create albumlist: "+albumList.get(albuminlist(thisAlbum.getName())).getPhoto(sp).getTags());
@@ -122,9 +126,19 @@ public class DisplayActivity extends Activity {
                     Bitmap myBitmap = BitmapFactory.decodeFile(path);
                     Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
                     imgView.setImageBitmap(resized);
+                    //for (Tag t:albumList.get(albuminlist(thisAlbum.getName())).getPhoto(photoinAlbum()).getTags()){
+                    //    selectedPhoto.addTag(t.getTag(),t.getValue());
+                    //}
                     for (Tag t:albumList.get(albuminlist(thisAlbum.getName())).getPhoto(photoinAlbum()).getTags()){
-                        selectedPhoto.addTag(t.getTag(),t.getValue());
+                        System.out.println("TAG T = "+t);
+                        if(!(selectedPhoto.getTags().contains(t))) {
+                            System.out.println("tag added");
+                            System.out.println(selectedPhoto.getTags());
+
+                            selectedPhoto.addTag(t.getTag(), t.getValue());
+                        }
                     }
+                    System.out.println(selectedPhoto.getTags());
                     tagAdapter.notifyDataSetChanged();
                     resetSelection();
 
@@ -147,8 +161,12 @@ public class DisplayActivity extends Activity {
                     Bitmap resized = Bitmap.createScaledBitmap(myBitmap, 700, 700, true);
                     imgView.setImageBitmap(resized);
                     for (Tag t:albumList.get(albuminlist(thisAlbum.getName())).getPhoto(photoinAlbum()).getTags()){
-                        selectedPhoto.addTag(t.getTag(),t.getValue());
+                        System.out.println("TAG T = "+t);
+                        if(!(selectedPhoto.getTags().contains(t))) {
+                            selectedPhoto.addTag(t.getTag(), t.getValue());
+                        }
                     }
+                    System.out.println(selectedPhoto.getTags());
                     tagAdapter.notifyDataSetChanged();
                     resetSelection();
                 }
