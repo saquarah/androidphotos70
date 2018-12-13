@@ -4,12 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.photos70.model.Album;
 import com.example.photos70.model.Photo;
+import com.example.photos70.model.Tag;
 
 import java.util.ArrayList;
 

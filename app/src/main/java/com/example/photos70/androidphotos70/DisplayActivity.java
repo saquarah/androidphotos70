@@ -2,20 +2,33 @@ package com.example.photos70.androidphotos70;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.photos70.adapters.DisplayAdapter;
 import com.example.photos70.adapters.PhotoAdapter;
 import com.example.photos70.model.Album;
 import com.example.photos70.model.Photo;
+import com.example.photos70.model.Tag;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,15 +42,22 @@ public class DisplayActivity extends Activity {
     private ArrayList<Photo> photoList = new ArrayList<Photo>();
     private ArrayList<Album> albumList;
     private Album thisAlbum;
-      private Photo selectedPhoto;
+    private Photo selectedPhoto;
     private ArrayList<ImageView> imageViewArrayList;
     private PhotoAdapter photoAdapter;
     private DisplayAdapter displayAdapter;
+    private ArrayAdapter<Tag> tagAdapter;
+    private ListView tagListView;
+    private Tag selectedTag;
+    private String tagType;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
+
+        // unpacking bundle
         Bundle bundle = getIntent().getExtras();
         selectedPhoto = (Photo) bundle.getSerializable("selected_photo");
         thisAlbum = (Album) bundle.getSerializable("album");
@@ -47,6 +67,15 @@ public class DisplayActivity extends Activity {
 
         loadSerializedObject();
 
+        if(selectedPhoto.getTags() == null) {
+
+        }
+
+        // setting up tag adapter and listView
+        tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, selectedPhoto.getTags());
+        tagListView = (ListView) findViewById(R.id.tagsList);
+        tagListView.setAdapter(tagAdapter);
+        tagListView.setOnItemClickListener( (p,v,pos,id) -> selectTag(pos) );
 
         System.out.println(albumList.toString());
         System.out.println(selectedPhoto.getFile().toString());
@@ -79,6 +108,29 @@ public class DisplayActivity extends Activity {
 
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // I honestly have no idea what this means, I just found this online.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.display_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.addTag:
+                addTagDialog();
+                break;
+            case R.id.deleteTag:
+                deleteTagDialog();
+                break;
+        }
+        // Not sure if this is needed
+        return super.onOptionsItemSelected(item);
     }
 
     //added to de-Serialize the ablum
@@ -143,4 +195,76 @@ public class DisplayActivity extends Activity {
     }
 
 
+    private void addTagDialog() {
+        tagType = "Person";
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose the type and then enter the value of the tag");
+        String[] choiceTypes = {"Person", "Location"};
+        builder.setSingleChoiceItems(choiceTypes, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                tagType = choiceTypes[which];
+            }
+        });
+
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String tagValue = input.getText().toString().trim();
+                if(tagValue.equals("")) {
+                    Toast.makeText(getBaseContext(), "No value entered", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
+                try {
+                    addTag(tagType, tagValue);
+                } catch (Exception e) {
+                    dialog.cancel();
+                    Toast.makeText(getBaseContext(), "This tag already exists.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void deleteTagDialog() {
+
+    }
+
+    private void addTag(String tag, String value) throws Exception {
+        for(Tag t: selectedPhoto.getTags()) {
+            if(t.getTag().toLowerCase().equals(tag.toLowerCase()) && t.getValue().toLowerCase().equals(value.toLowerCase())) {
+                throw new Exception();
+            }
+        }
+        System.out.println(selectedPhoto.getTags().toString());
+        selectedPhoto.getTags().add(new Tag(tag, value));
+        tagAdapter.notifyDataSetChanged();
+    }
+
+
+    private void selectTag(int pos) {
+        selectedTag = selectedPhoto.getTags().get(pos);
+    }
+
+    private void resetSelection() {
+        selectedTag = null;
+        tagListView.setAdapter(tagAdapter); // this somehow clears the selection highlight
+        // Note: every time the photo is switched a new tag adapter must be created. This is because you can't
+        // change the arraylist it's using after obejct creation
+    }
 }
