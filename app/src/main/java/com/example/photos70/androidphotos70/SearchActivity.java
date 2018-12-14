@@ -50,6 +50,8 @@ public class SearchActivity extends Activity {
         photoAdapter = new PhotoAdapter(this, new ArrayList<Photo>());
         gridView.setAdapter(photoAdapter);
 
+        Toast.makeText(getApplicationContext(), "Touch the magnifying glass in the top right to search", Toast.LENGTH_LONG).show();
+
     }
 
     @Override
