@@ -58,20 +58,21 @@ public class DisplayActivity extends Activity {
     private Album newAlbum;
     private String new_Album;
     private ImageView imgView;
-
+    private TextView fileTextView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
-
+        fileTextView = findViewById(R.id.fileTextView);
         // unpacking bundle
         Bundle bundle = getIntent().getExtras();
         selectedPhoto = (Photo) bundle.getSerializable("selected_photo");
         thisAlbum = (Album) bundle.getSerializable("album");
         albumList = (ArrayList<Album>) bundle.getSerializable("album_list");
-
+        String fileName = extractFileName(selectedPhoto.getFile());
+        fileTextView.setText(fileName);
         displayAdapter = new DisplayAdapter(this, photoList);
 
         loadSerializedObject();
@@ -473,6 +474,7 @@ public class DisplayActivity extends Activity {
                     selectedPhoto= x.get(count);
                     System.out.println(selectedPhoto);
                     System.out.println(selectedPhoto.getFile());
+                    fileTextView.setText(extractFileName(selectedPhoto.getFile()));
                     tagListView.setAdapter(null);
                     tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, albumList.get(albuminlist(thisAlbum.getName())).getPhoto(photoinAlbum()).getTags());
                     tagListView.setAdapter(tagAdapter);
@@ -515,6 +517,7 @@ public class DisplayActivity extends Activity {
                     selectedPhoto= x.get(count);
                     System.out.println(selectedPhoto);
                     System.out.println(selectedPhoto.getFile());
+                    fileTextView.setText(extractFileName(selectedPhoto.getFile()));
                     tagListView.setAdapter(null);
                     tagAdapter = new ArrayAdapter<Tag>(this, R.layout.tags_listview_detail, albumList.get(albuminlist(thisAlbum.getName())).getPhoto(photoinAlbum()).getTags());
                     tagListView.setAdapter(tagAdapter);
@@ -665,4 +668,19 @@ public class DisplayActivity extends Activity {
         // Note: every time the photo is switched a new tag adapter must be created. This is because you can't
         // change the arraylist it's using after obejct creation
     }
+
+    private String extractFileName(String fullName) {
+        String name = "";
+        for(int i = fullName.length() - 1; i >= 0; i--) {
+            char currentChar = fullName.charAt(i);
+            if(currentChar == 47) {
+                return name;
+            } else {
+                name = fullName.charAt(i) + name;
+            }
+        }
+        return name;
+    }
+
+
 }
